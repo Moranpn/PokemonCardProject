@@ -14,12 +14,13 @@ def getPrice(URL):
 
     lineStr = str(line) #converts it to a string
 
-    priceL = re.findall("\$[0-9]+\.[0-9]+", lineStr) #returns just the price from the string
+    priceL = re.findall("\$[0-9]?,?[0-9]+\.[0-9]+", lineStr) #returns just the price from the string
     
     #converts list to str
     price = ''
     for p in priceL:
         price+=p
+
     
     return price
 
