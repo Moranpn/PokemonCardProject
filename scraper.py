@@ -1,5 +1,5 @@
 import requests
-import re
+#import re
 from bs4 import BeautifulSoup
   
 def getPrice(URL):
@@ -12,15 +12,13 @@ def getPrice(URL):
 
     line = soup.find('td', attrs = {'class':'price-point__data'}) #grabs the line that displays market price
 
-    lineStr = str(line) #converts it to a string
+    #lineStr = str(line) #converts it to a string
 
-    priceL = re.findall("\$[0-9]?,?[0-9]+\.[0-9]+", lineStr) #returns just the price from the string
+    #priceL = re.findall("\$[0-9]?,?[0-9]+\.[0-9]+", lineStr) #returns just the price from the string
     
     #converts list to str
-    price = ''
-    for p in priceL:
-        price+=p
-
+    #price = ''
+    #for p in priceL:
+    #    price+=p
     
-    return price
-
+    return line.next_element if line else ''

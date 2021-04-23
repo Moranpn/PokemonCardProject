@@ -35,47 +35,113 @@ def getHeaderIndex(header, headers):
 #appennds pokemon name and url
 def appendURLs(csvRows, headers):
   urls = [] #list of urls
+  i = 0 #index counter
 
   #adds the inital url to the list along with the set
   for setTag in getColumn(csvRows, getHeaderIndex('Set', headers)):
-     
+    
     #removes spaces and replaces them with hypens
-    name = setTag.split(' ') 
+    name = setTag.split() 
     name3 = ''
     for name2 in name:
       name3+=name2+"-"
-    name3=name3[:-1]    
+    name3=name3[:-1] # Remove the last dash
 
     urls.append('https://shop.tcgplayer.com/pokemon/'+name3+'/')
 
-
-  i = 0 #index counter
   for penis in getColumn(csvRows, getHeaderIndex('Name', headers)): #grabs the list of pokemon names
     
     #removes spaces and replaces them with hypens
-    name = penis.split(' ') 
+    name = penis.split()
     name3 = ''
     for name2 in name:
       name3+=name2+"-"
     name3=name3[:-1]
 
+    specialTag = getColumn(csvRows, getHeaderIndex('Special', headers))[i]
     #goes through possible specialties and adds it to the tag
-    if(getColumn(csvRows, getHeaderIndex('Special', headers))[i] == 'EX'):
+    if(specialTag == 'EX'):
       urls[i] += name3+'-ex'
-    elif(getColumn(csvRows, getHeaderIndex('Special', headers))[i] == 'SR'):
-      urls[i] += name3+'-secret'
-    elif(getColumn(csvRows, getHeaderIndex('Special', headers))[i] == 'RR'):
-      urls[i] += name3+'-secret'
-    elif(getColumn(csvRows, getHeaderIndex('Special', headers))[i] == 'GX'):
+    elif(specialTag == 'SR'):
+      urls[i] += name3+'-'+secrets(csvRows, headers, i)
+    elif(specialTag == 'GX'):
       urls[i] += name3+'-gx'
-    elif(getColumn(csvRows, getHeaderIndex('Special', headers))[i] == 'FA'):
-      urls[i] += name3+'-full-art'
+    #elif(specialTag == 'FA'):
+    #  urls[i] += name3+'-full-art'
+    elif(specialTag == 'V'):
+      urls[i] += name3+'-v'
+    elif(specialTag == 'LvX'):
+      urls[i] += name3+'-lvx'
+    elif(specialTag == 'Prism'):
+      urls[i] += name3+'-prism-star'
+    elif(specialTag == 'Mega EX'):
+      urls[i] += name3+'-ex'
+    elif(specialTag == 'GX Tag Team'):
+      urls[i] += name3+'-gx'
+    elif(specialTag == 'Prime'):
+      urls[i] += name3+'-prime'
+    elif(specialTag == 'Break'):
+      urls[i] += name3+'-break'
+    elif(specialTag == 'Primal EX'):
+      urls[i] += name3+'-ex'
+    elif(specialTag == 'GX Ultra Beast'):
+      urls[i] += name3+'-gx'
+    elif(specialTag == 'Star'):
+      urls[i] += name3+'-star'
+    elif(specialTag == 'Delta Species'):#deoxys
+      urls[i] += name3+'-delta-species-defense-forme'
     else:
-      urls.insert(i, name3)
+      #urls.insert(i, name3)
+      urls[i] += name3
 
-    i=i+1
+    rarityTag = getColumn(csvRows, getHeaderIndex('Rarity', headers))[i]
+    #goes through possible rarities and adds it to the tag
+    if(rarityTag == 'RR'):
+      urls[i] += '-secret'
+    elif(rarityTag == 'FA UR'):
+      urls[i] += '-' + fullarts(csvRows, headers, i)
+    elif(rarityTag == 'PROMO UR'):
+      urls[i] += '-' + promos(csvRows, headers, i) 
+    elif(rarityTag == 'FA UR OMEGA'):#groudon
+      urls[i] += '-omega-151-full-art'
+    elif(rarityTag == 'FA UR 89'):#hoopa
+      urls[i] += '-89-full-art'
+    elif(rarityTag == 'PROMO UR SHINY'):#metagross
+      urls[i] += '-shiny'
+    elif(rarityTag == 'UR Plasma'):#palkia
+      urls[i] += '-team-plasma'
+
+    if(getColumn(csvRows, getHeaderIndex('Number', headers))[i] == 'XY85'):#hoopa
+      urls[i] += '-collection-promo'
+    #if(getColumn(csvRows, getHeaderIndex('Number', headers))[i] == '6/34'):#team aqua kyogre
+    #  urls[i] += ''
+    
+    i+=1
     
   return urls
+
+#adds the card number to the full art tag
+def fullarts(csvRows, headers, i):
+  fullArtTag = getColumn(csvRows, getHeaderIndex('Set', headers))[i]
+  if(fullArtTag != 'XY Roaring Skies' and fullArtTag != 'XY Primal Clash' and getColumn(csvRows, getHeaderIndex('Special', headers))[i] != 'FA'): 
+    return 'full-art'
+  else:
+    number = getColumn(csvRows, getHeaderIndex('Number', headers))[i]
+    return number[0:number.find('/')] + '-full-art'
+
+#checks to see if the SR card needs SR tag
+def secrets(csvRows, headers, i):
+  if(getColumn(csvRows, getHeaderIndex('Special', headers))[i] != "SR"):
+    return '-secret'
+  else:
+    return ''
+
+#checks promos for tag team or for black and white set
+def promos(csvRows, headers, i):
+  if(getColumn(csvRows, getHeaderIndex('Name', headers))[i].find(" and ") == -1 and getColumn(csvRows, getHeaderIndex('Set', headers))[i].find(" and ") == -1):
+    return getColumn(csvRows, getHeaderIndex('Number', headers))[i]
+  else:
+   return ''
 
 
 
